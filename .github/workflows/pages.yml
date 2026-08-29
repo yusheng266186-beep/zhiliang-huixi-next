@@ -1,4 +1,4 @@
-name: Deploy quality insight to GitHub Pages
+name: Deploy quality insight NEXT to GitHub Pages
 
 on:
   push:
@@ -18,51 +18,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout legacy source
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: legacy
-      - name: Checkout v2 source
-        uses: actions/checkout@v4
-        with:
-          ref: agent/v2-ui-release
-          path: v2-source
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build legacy site
-        working-directory: legacy
+      - name: Quality gate + build
         run: |
           npm ci
           npx tsc --noEmit
           npm run lint
           npm run build:pages
-          # vite.pages.config.ts 已将产物规整为 pages-dist/index.html + ./assets/；
-          # 保留对旧产物布局（pages-static/index.html + ../assets）的回退，兼容从旧配置构建的分支。
-          if [ ! -f pages-dist/index.html ] && [ -f pages-dist/pages-static/index.html ]; then
-            cp pages-dist/pages-static/index.html pages-dist/index.html
-            sed -i 's|\.\./assets/|./assets/|g' pages-dist/index.html
-            rm -rf pages-dist/pages-static
-          fi
           node scripts/check-pages-build.mjs
-      - name: Build v2 site
-        working-directory: v2-source
-        run: |
-          npm ci
-          npm run build:pages
-          if [ ! -f pages-dist/index.html ] && [ -f pages-dist/pages-static/index.html ]; then
-            cp pages-dist/pages-static/index.html pages-dist/index.html
-            sed -i 's|\.\./assets/|./assets/|g' pages-dist/index.html
-            rm -rf pages-dist/pages-static
-          fi
-          if [ -f scripts/check-pages-build.mjs ]; then node scripts/check-pages-build.mjs; else echo "v2 branch has no smoke check script, skipping"; fi
-      - name: Compose versioned Pages artifact
-        run: |
-          mkdir -p pages-artifact/v2
-          cp -a legacy/pages-dist/. pages-artifact/
-          cp -a v2-source/pages-dist/. pages-artifact/v2/
-          touch pages-artifact/.nojekyll
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -70,7 +38,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages-artifact
+          path: pages-dist
 
   deploy:
     environment:
