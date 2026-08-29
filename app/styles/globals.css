@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* ============ 质量慧析 NEXT · 深空观测站 设计令牌 ============ */
+@theme {
+  --color-bg0: #05070f;
+  --color-bg1: #0a0f1f;
+  --color-bg2: #0e1528;
+  --color-panel: rgba(148, 163, 184, 0.055);
+  --color-panel-strong: rgba(148, 163, 184, 0.1);
+  --color-line: rgba(148, 163, 184, 0.16);
+  --color-line-strong: rgba(148, 163, 184, 0.3);
+  --color-ink: #e8eef9;
+  --color-muted: #8b97ad;
+  --color-faint: #5b6880;
+  --color-accent: #22d3ee;
+  --color-accent2: #a78bfa;
+  --color-tier-top: #fbbf24;
+  --color-tier-under: #34d399;
+  --color-warn: #fb923c;
+  --color-danger: #f87171;
+  --radius-panel: 18px;
+}
+
+:root {
+  --bg-0: #05070f;
+  --bg-1: #0a0f1f;
+  --text: #e8eef9;
+  --muted: #8b97ad;
+  --line: rgba(148, 163, 184, 0.16);
+  --accent: #22d3ee;
+  --accent-2: #a78bfa;
+  --tier-top: #fbbf24;
+  --tier-under: #34d399;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-nums: "SF Mono", "Cascadia Code", "Consolas", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-feature-settings: "tnum";
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* 极光背景：三层渐变 + 缓慢漂移，固定在视口 */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1100px 700px at 12% -8%, rgba(34, 211, 238, 0.09), transparent 60%),
+    radial-gradient(900px 620px at 88% 12%, rgba(167, 139, 250, 0.08), transparent 62%),
+    radial-gradient(1200px 900px at 50% 118%, rgba(59, 130, 246, 0.07), transparent 58%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1) 55%, #070c19);
+}
+.aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 18%, rgba(255, 255, 255, 0.22) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 42% 72%, rgba(255, 255, 255, 0.18) 50%, transparent 51%),
+    radial-gradient(1px 1px at 84% 58%, rgba(255, 255, 255, 0.28) 50%, transparent 51%);
+  background-size: 520px 520px;
+  animation: drift 90s linear infinite;
+  opacity: 0.55;
+}
+@keyframes drift {
+  to { background-position: 520px 1040px, -520px 520px, 260px -780px, -260px 260px; }
+}
+
+/* 玻璃面板 */
+.glass {
+  background: linear-gradient(160deg, rgba(148, 163, 184, 0.075), rgba(148, 163, 184, 0.035));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.glow-hover { transition: border-color 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo); }
+.glow-hover:hover {
+  border-color: rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12), 0 8px 40px rgba(34, 211, 238, 0.08);
+}
+
+/* 大数字 */
+.kpi-num {
+  font-family: var(--font-nums);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* 发光描边标题 */
+.grad-text {
+  background: linear-gradient(92deg, #7dd3fc, #22d3ee 40%, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+::selection { background: rgba(34, 211, 238, 0.3); }
+
+:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.7);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* 表格基调 */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.data-table th {
+  text-align: left; font-weight: 600; color: var(--muted); font-size: 12px;
+  padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap;
+  position: sticky; top: 0; background: rgba(10, 15, 31, 0.9); backdrop-filter: blur(8px); z-index: 1;
+}
+.data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(148, 163, 184, 0.07); white-space: nowrap; }
+.data-table tbody tr { transition: background 0.2s var(--ease-out-expo); }
+.data-table tbody tr:hover { background: rgba(34, 211, 238, 0.045); }
+.data-table .num { font-family: var(--font-nums); font-variant-numeric: tabular-nums; }
+
+/* 玻璃下拉与输入 */
+.glass-select, .glass-input {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 13px;
+  transition: border-color 0.25s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo);
+}
+.glass-select:hover, .glass-input:hover { border-color: var(--line-strong); }
+.glass-select:focus, .glass-input:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.6);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+}
+.glass-select option { background: #0e1528; color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora::after { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
