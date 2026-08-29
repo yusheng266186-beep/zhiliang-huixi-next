@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { createDemoDataset } from "./demo";
 import { parseGradeWorkbook } from "./parser";
 import { loadLatestDataset, saveLatestDataset } from "./storage";
@@ -40,8 +40,22 @@ export interface DatasetState {
 }
 
 // 数据状态机：恢复(IndexedDB) → 空/就绪；导入/演示/清除是唯一的数据入口。
-// 视图永远通过 ViewContext 拿数据，禁止自行读取存储或解析文件。
+// 通过 Context 提供全局唯一实例：任何视图调用 useDataset() 拿到的是同一份状态，
+// 设置页导入后外壳与所有视图立即同步。
+const DatasetContext = createContext<DatasetState | null>(null);
+
+export function DatasetProvider({ children }: { children: ReactNode }) {
+  const state = useDatasetState();
+  return <DatasetContext.Provider value={state}>{children}</DatasetContext.Provider>;
+}
+
 export function useDataset(): DatasetState {
+  const state = useContext(DatasetContext);
+  if (!state) throw new Error("useDataset 必须在 <DatasetProvider> 内使用（AppShell 已提供）。");
+  return state;
+}
+
+function useDatasetState(): DatasetState {
   const [dataset, setDataset] = useState<GradeDataset | null>(null);
   const [status, setStatus] = useState<DatasetStatus>("restoring");
   const [importMessage, setImportMessage] = useState<string | null>(null);

@@ -18,8 +18,8 @@ import {
   UsersRound,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useDataset, useFilters, type ViewContext, type ViewId } from "./lib/hooks";
-import type { Track } from "./lib/types";
+import { DatasetProvider, useDataset, useFilters, type ViewContext, type ViewId } from "./lib/hooks";
+import type { GradeDataset, Track } from "./lib/types";
 import { GlowButton, Select } from "./components/ui";
 import { PageTransition, Stagger, StaggerItem } from "./components/motion";
 import "./styles/globals.css";
@@ -44,6 +44,14 @@ const viewComponents = Object.fromEntries(
 const groups = ["全局分析", "精细诊断", "输出与设置"] as const;
 
 export default function Home() {
+  return (
+    <DatasetProvider>
+      <AppShell />
+    </DatasetProvider>
+  );
+}
+
+function AppShell() {
   const data = useDataset();
   const filters = useFilters(data.dataset);
   const [view, setView] = useState<ViewId>("dashboard");
@@ -63,26 +71,35 @@ export default function Home() {
   }, [data.dataset, filters]);
 
   const ActiveView = ctx ? viewComponents[view] : null;
+  // 设置页的导入流程必须在"无数据"时也可达：用空数据集桩构造一个仅设置页使用的 ctx
+  const emptyDataset: GradeDataset = {
+    id: "empty", sourceName: "", importedAt: "", school: "", exams: [], scores: [],
+    thresholds: [], questionBanks: {}, itemResponses: [], issues: [], sheets: [],
+  };
+  const shellCtx: ViewContext | null = ctx ?? (view === "settings"
+    ? { dataset: emptyDataset, exam: "", track: "全部", classNo: "全部", setExam: () => {}, setTrack: () => {}, setClassNo: () => {}, go: (next: ViewId) => setView(next) }
+    : null);
+  const ShellView = shellCtx ? viewComponents[view] : null;
 
   return (
     <div className="min-h-screen">
       <div className="aurora" />
       <div className="mx-auto flex min-h-screen w-full max-w-[1560px]">
-        <SideRail view={view} onView={setView} disabled={!ctx} />
+        <SideRail view={view} onView={setView} disabled={false} />
         <main className="min-w-0 flex-1 px-4 pb-24 pt-4 md:px-8 md:pb-10">
           <TopBar data={data} filters={filters} view={view} onView={setView} />
-          {!ctx ? (
-            data.status === "restoring" ? <RestoringScreen /> : <WelcomeScreen data={data} />
+          {!shellCtx ? (
+            data.status === "restoring" ? <RestoringScreen /> : <WelcomeScreen data={data} onView={setView} />
           ) : (
             <PageTransition viewKey={view}>
               <Suspense fallback={<ViewSkeleton />}>
-                {ActiveView && <ActiveView ctx={ctx} />}
+                {ShellView && <ShellView ctx={shellCtx} />}
               </Suspense>
             </PageTransition>
           )}
         </main>
       </div>
-      <MobileNav view={view} onView={setView} disabled={!ctx} />
+      <MobileNav view={view} onView={setView} disabled={false} />
     </div>
   );
 }
@@ -208,7 +225,7 @@ function TopBar({ data, filters, view, onView }: {
 }
 
 /** 欢迎页（无数据时） */
-function WelcomeScreen({ data }: { data: ReturnType<typeof useDataset> }) {
+function WelcomeScreen({ data, onView }: { data: ReturnType<typeof useDataset>; onView: (view: ViewId) => void }) {
   return (
     <Stagger className="mt-[12vh] flex flex-col items-center text-center">
       <StaggerItem>
@@ -222,7 +239,7 @@ function WelcomeScreen({ data }: { data: ReturnType<typeof useDataset> }) {
         <GlowButton onClick={() => { data.loadDemo(); }}>
           <Sparkles size={15} /> 先看演示数据
         </GlowButton>
-        <GlowButton tone="violet" onClick={() => { data.loadDemo(); }}>
+        <GlowButton tone="violet" onClick={() => onView("settings")}>
           <Menu size={15} /> 了解导入方式
         </GlowButton>
       </StaggerItem>
