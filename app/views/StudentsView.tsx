@@ -19,8 +19,8 @@ const format1 = (value: number) => value.toFixed(1);
 function TierLegend() {
   return (
     <div className="flex shrink-0 items-center gap-3 text-[11px] text-muted">
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.7)]" />一本/特控</span>
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.7)]" />本科</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top" />一本/特控</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under" />本科</span>
     </div>
   );
 }
@@ -109,7 +109,7 @@ export default function StudentsView({ ctx }: { ctx: ViewContext }) {
               <div className="pointer-events-none absolute -right-10 -top-14 h-44 w-44 rounded-full bg-accent/10 blur-3xl" />
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="grad-text flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-line-strong bg-white/[0.04] text-3xl font-semibold">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-line-strong bg-white/[0.04] text-3xl font-semibold">
                     {selected.name.slice(-1)}
                   </div>
                   <div className="min-w-0">

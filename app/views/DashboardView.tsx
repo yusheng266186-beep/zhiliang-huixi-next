@@ -36,31 +36,31 @@ import type { ViewContext } from "../lib/hooks";
 
 // 与旧版 SEGMENT_COLORS 语义一致（任务约定：分段色沿用旧版语义内联样式）
 const SEGMENT_COLORS: Record<ScoreSegment["id"], string> = {
-  high: "#5B5BD6",
-  top: "#7C73E6",
-  "top-critical": "#F59E0B",
-  undergraduate: "#10B981",
-  "undergraduate-critical": "#34D399",
-  foundation: "#94A3B8",
-  unclassified: "#CBD5E1",
+  high: "#1c1b18",
+  top: "#55524b",
+  "top-critical": "#b45309",
+  undergraduate: "#0f766e",
+  "undergraduate-critical": "#0d9488",
+  foundation: "#a8a49b",
+  unclassified: "#dedbd4",
 };
 
 const format1 = (value: number) => value.toFixed(1);
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
 const TONE_STYLES: Record<ExecutiveInsight["tone"], { dot: string; text: string; label: string }> = {
-  good: { dot: "bg-tier-under shadow-[0_0_10px_rgba(52,211,153,0.55)]", text: "text-tier-under", label: "状态良好" },
-  warn: { dot: "bg-warn shadow-[0_0_10px_rgba(251,146,60,0.55)]", text: "text-warn", label: "需要关注" },
-  attention: { dot: "bg-danger shadow-[0_0_10px_rgba(248,113,113,0.55)]", text: "text-danger", label: "重点预警" },
-  neutral: { dot: "bg-accent2 shadow-[0_0_10px_rgba(167,139,250,0.55)]", text: "text-accent2", label: "中性观察" },
+  good: { dot: "bg-tier-under", text: "text-tier-under", label: "状态良好" },
+  warn: { dot: "bg-warn", text: "text-warn", label: "需要关注" },
+  attention: { dot: "bg-danger", text: "text-danger", label: "重点预警" },
+  neutral: { dot: "bg-accent2", text: "text-accent2", label: "中性观察" },
 };
 
 /** 一本/本科颜色说明（与旧版 TierLegend 语义一致） */
 function TierLegend() {
   return (
     <div className="flex shrink-0 items-center gap-3 text-[11px] text-muted">
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.7)]" />一本/特控</span>
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.7)]" />本科</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top" />一本/特控</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under" />本科</span>
     </div>
   );
 }
@@ -160,23 +160,20 @@ export default function DashboardView({ ctx }: { ctx: ViewContext }) {
       {/* 首屏：错拍进场 */}
       <Stagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StaggerItem className="sm:col-span-2 xl:col-span-2">
-          <div className="glass glow-hover relative flex h-full flex-col justify-between gap-6 overflow-hidden p-6">
-            <div className="pointer-events-none absolute -left-10 -top-16 h-48 w-48 rounded-full bg-accent/10 blur-3xl" />
+          <div className="glass relative flex h-full flex-col justify-between gap-6 overflow-hidden p-6">
             <div>
-              <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-accent/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
-                Exam Intelligence
+              <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-faint">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
+                Overview
               </p>
-              <h2 className="mt-3 text-[clamp(20px,2vw,26px)] font-semibold leading-snug text-ink">
-                {exam}考试<br />
-                <span className="grad-text">{track}质量驾驶舱</span>
+              <h2 className="mt-3 text-[clamp(20px,2vw,26px)] font-semibold leading-snug tracking-tight text-ink">
+                {exam}考试 · {track}质量总览
               </h2>
               <p className="mt-3 max-w-md text-[13px] leading-relaxed text-muted">
                 把复杂成绩转化为清晰决策。从年级概况下钻到班级、学科、学生与小题，每个结论均由导入数据实时重算。
               </p>
               <div className="mt-4 flex flex-wrap gap-4 text-[11px] text-faint">
                 <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-tier-under" />本地隐私计算</span>
-                <span className="inline-flex items-center gap-1.5"><Sparkles size={13} className="text-accent2" />智能洞察已启用</span>
               </div>
             </div>
             <div className="glass rounded-2xl p-4">
@@ -354,10 +351,10 @@ export default function DashboardView({ ctx }: { ctx: ViewContext }) {
                     </div>
                     <div className="mt-1.5 space-y-1">
                       <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                        <div className="h-full rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.45)] transition-[width] duration-700" style={{ width: `${Math.min(100, item.topEffectiveRate * 100)}%` }} />
+                        <div className="h-full rounded-full bg-tier-top transition-[width] duration-700" style={{ width: `${Math.min(100, item.topEffectiveRate * 100)}%` }} />
                       </div>
                       <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                        <div className="h-full rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.45)] transition-[width] duration-700" style={{ width: `${Math.min(100, item.undergraduateEffectiveRate * 100)}%` }} />
+                        <div className="h-full rounded-full bg-tier-under transition-[width] duration-700" style={{ width: `${Math.min(100, item.undergraduateEffectiveRate * 100)}%` }} />
                       </div>
                     </div>
                   </button>

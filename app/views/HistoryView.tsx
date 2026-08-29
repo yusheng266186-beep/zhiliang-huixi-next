@@ -17,8 +17,8 @@ const format1 = (value: number) => value.toFixed(1);
 function TierLegend() {
   return (
     <div className="flex shrink-0 items-center gap-3 text-[11px] text-muted">
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.7)]" />一本/特控</span>
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.7)]" />本科</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top" />一本/特控</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under" />本科</span>
     </div>
   );
 }

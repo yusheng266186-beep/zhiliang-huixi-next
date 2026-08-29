@@ -82,7 +82,6 @@ function AppShell() {
 
   return (
     <div className="min-h-screen">
-      <div className="aurora" />
       <div className="mx-auto flex min-h-screen w-full max-w-[1560px]">
         <SideRail view={view} onView={setView} disabled={false} />
         <main className="min-w-0 flex-1 px-4 pb-24 pt-4 md:px-8 md:pb-10">
@@ -165,9 +164,9 @@ function TopBar({ data, filters, view, onView }: {
     <header className="mb-6 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.3em] text-accent/80">Quality Insight · NEXT</p>
-          <h1 className="mt-1 text-xl font-semibold tracking-wide text-ink">
-            质量慧析 <span className="grad-text">深空观测站</span>
+          <p className="text-[11px] uppercase tracking-[0.25em] text-faint">Quality Insight</p>
+          <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-ink">
+            质量慧析
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -232,7 +231,7 @@ function WelcomeScreen({ data, onView }: { data: ReturnType<typeof useDataset>; 
           <GraduationCap size={36} className="text-accent" />
         </div>
       </StaggerItem>
-      <StaggerItem><h2 className="text-3xl font-semibold tracking-wide">把成绩单，变成<span className="grad-text">观测站</span></h2></StaggerItem>
+      <StaggerItem><h2 className="text-3xl font-semibold tracking-wide">先看一眼数据，再谈判断</h2></StaggerItem>
       <StaggerItem><p className="mt-4 max-w-md text-sm leading-relaxed text-muted">导入质量复盘工作簿，即可在本地完成年级、班级、学科、学生与小题的全链路分析。数据只留在本机浏览器中。</p></StaggerItem>
       <StaggerItem className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <GlowButton onClick={() => { data.loadDemo(); }}>

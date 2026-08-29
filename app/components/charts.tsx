@@ -5,20 +5,20 @@
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TIER_COLORS } from "../lib/chart-theme";
 
-const GRID = "rgba(148,163,184,0.12)";
-const AXIS_TICK = { fill: "#8b97ad", fontSize: 11 };
-const ACCENT = "#22d3ee";
-const VIOLET = "#a78bfa";
+const GRID = "#eceae5";
+const AXIS_TICK = { fill: "#8a8a84", fontSize: 11 };
+const ACCENT = "#2b5bd7";
+const VIOLET = "#1c1b18";
 const TOP = TIER_COLORS.top;
 const UNDER = TIER_COLORS.undergraduate;
 const COLORS = [TOP, UNDER, VIOLET, ACCENT];
 
 const axis = { tick: AXIS_TICK, axisLine: false as const, tickLine: false as const };
 const darkTooltip = {
-  contentStyle: { background: "rgba(10,15,31,0.94)", border: "1px solid rgba(148,163,184,0.28)", borderRadius: 12, fontSize: 12, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" },
-  labelStyle: { color: "#e8eef9", fontWeight: 600 },
-  itemStyle: { color: "#c3cede" },
-  cursor: { fill: "rgba(34,211,238,0.06)" },
+  contentStyle: { background: "#ffffff", border: "1px solid #e8e6e1", borderRadius: 10, fontSize: 12, boxShadow: "0 4px 16px rgba(28,27,24,0.08)" },
+  labelStyle: { color: "#1c1b18", fontWeight: 600 },
+  itemStyle: { color: "#75736c" },
+  cursor: { fill: "rgba(43,91,215,0.05)" },
 };
 
 type ChartRow = Record<string, unknown>;
@@ -27,18 +27,13 @@ export function DistributionChart({ bins, medianBinLabel }: { bins: ChartRow[]; 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={bins} margin={{ top: 12, right: 8, left: -12, bottom: 0 }}>
-        <defs>
-          <linearGradient id="distFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={ACCENT} stopOpacity={0.95} />
-            <stop offset="100%" stopColor={VIOLET} stopOpacity={0.35} />
-          </linearGradient>
-        </defs>
+        
         <CartesianGrid strokeDasharray="3 6" vertical={false} stroke={GRID} />
         <XAxis dataKey="label" {...axis} interval={0} />
         <YAxis allowDecimals={false} {...axis} />
         <Tooltip {...darkTooltip} />
-        <ReferenceLine x={medianBinLabel} stroke={VIOLET} strokeDasharray="4 4" label={{ value: "中位数", fill: VIOLET, fontSize: 10, position: "top" }} />
-        <Bar dataKey="count" name="人数" fill="url(#distFill)" radius={[6, 6, 2, 2]} animationDuration={900} />
+        <ReferenceLine x={medianBinLabel} stroke={VIOLET} strokeDasharray="4 4" label={{ value: "中位数", fill: "#75736c", fontSize: 10, position: "top" }} />
+        <Bar dataKey="count" name="人数" fill="#2b5bd7" radius={[6, 6, 2, 2]} animationDuration={900} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -64,7 +59,7 @@ export function TrackPieChart({ data }: { data: ChartRow[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
-        <Pie data={data} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="85%" paddingAngle={4} cornerRadius={6} animationDuration={1000} stroke="rgba(5,7,15,0.8)">
+        <Pie data={data} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="85%" paddingAngle={4} cornerRadius={6} animationDuration={1000} stroke="#ffffff">
           {data.map((_, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
         </Pie>
         <Tooltip {...darkTooltip} />
@@ -96,17 +91,12 @@ export function SubjectClassChart({ data }: { data: ChartRow[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 12, right: 8, left: -8, bottom: 0 }}>
-        <defs>
-          <linearGradient id="subjectFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={ACCENT} stopOpacity={0.95} />
-            <stop offset="100%" stopColor={ACCENT} stopOpacity={0.25} />
-          </linearGradient>
-        </defs>
+        
         <CartesianGrid strokeDasharray="3 6" vertical={false} stroke={GRID} />
         <XAxis dataKey="name" {...axis} />
         <YAxis domain={["dataMin - 8", "dataMax + 5"]} {...axis} />
         <Tooltip {...darkTooltip} cursor={{ fill: "rgba(34,211,238,0.06)" }} />
-        <Bar dataKey="average" name="平均分" fill="url(#subjectFill)" radius={[7, 7, 2, 2]} animationDuration={1000} />
+        <Bar dataKey="average" name="平均分" fill="#2b5bd7" radius={[7, 7, 2, 2]} animationDuration={1000} />
       </BarChart>
     </ResponsiveContainer>
   );

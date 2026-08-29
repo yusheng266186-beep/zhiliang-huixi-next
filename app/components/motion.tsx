@@ -1,23 +1,24 @@
 "use client";
 
 // 动效原语：全部基于 motion/react，内置 prefers-reduced-motion 降级。
-// 视图代码只允许通过这些原语做动画，保证全站动效语言一致且流畅。
+// 简约高级风格：动效只服务于状态变化——快、轻、无炫技。
+// 曲线只有两种：交互用 spring(400/40)，进出场景用 [0.22,1,0.36,1]；时长 ≤250ms。
 import { AnimatePresence, motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 
 export const EASE_OUT_EXPO = [0.22, 1, 0.36, 1] as const;
 
-/** 视图切换容器：key 变化时交叉淡入 + 上浮 */
+/** 视图切换：快速淡入 + 轻微上浮 */
 export function PageTransition({ viewKey, children }: { viewKey: string; children: ReactNode }) {
   const reduced = useReducedMotion();
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={viewKey}
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(4px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(2px)" }}
-        transition={{ duration: 0.28, ease: EASE_OUT_EXPO }}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+        transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
       >
         {children}
       </motion.div>
@@ -25,24 +26,24 @@ export function PageTransition({ viewKey, children }: { viewKey: string; childre
   );
 }
 
-/** 进入视口时淡入上浮（只触发一次） */
+/** 进入视口时淡入上浮（只触发一次，幅度克制） */
 export function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className={className}
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay, ease: EASE_OUT_EXPO }}
+      transition={{ duration: 0.35, delay, ease: EASE_OUT_EXPO }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** 容器 + 子项的错拍进场：直接子节点需包 <StaggerItem> */
-export function Stagger({ children, className, gap = 0.05 }: { children: ReactNode; className?: string; gap?: number }) {
+/** 容器 + 子项的轻微错拍（0.03s，位移 6px，无缩放） */
+export function Stagger({ children, className, gap = 0.03 }: { children: ReactNode; className?: string; gap?: number }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
@@ -62,8 +63,8 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
     <motion.div
       className={className}
       variants={{
-        hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.985 },
-        show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 260, damping: 26 } },
+        hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 6 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE_OUT_EXPO } },
       }}
     >
       {children}
@@ -71,13 +72,13 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
   );
 }
 
-/** KPI 数字滚动：进入视口后从 0 滚到目标值，目标变化时平滑追踪 */
+/** KPI 数字滚动：进入视口后短促滚动到目标值 */
 export function CountUp({ value, digits = 0, suffix = "", className }: { value: number; digits?: number; suffix?: string; className?: string }) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-30px" });
   const mv = useMotionValue(0);
-  const spring = useSpring(mv, { stiffness: 90, damping: 24, mass: 0.8 });
+  const spring = useSpring(mv, { stiffness: 160, damping: 30 });
   const text = useTransform(spring, (latest) => `${latest.toFixed(digits)}${suffix}`);
 
   useEffect(() => {
@@ -91,31 +92,24 @@ export function CountUp({ value, digits = 0, suffix = "", className }: { value: 
   );
 }
 
-/** 悬停上浮 + 青光边框（配合 .glow-hover） */
+/** 悬停：仅背景微变（位移交给 CSS border 变化），保持版面稳定 */
 export function Hoverable({ children, className, onClick }: { children: ReactNode; className?: string; onClick?: () => void }) {
-  const reduced = useReducedMotion();
   return (
-    <motion.div
-      className={`glow-hover ${className ?? ""}`}
-      onClick={onClick}
-      whileHover={reduced ? undefined : { y: -3 }}
-      whileTap={reduced ? undefined : { scale: 0.99 }}
-      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-    >
+    <div className={`glow-hover ${className ?? ""}`} onClick={onClick}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/** 按压反馈按钮容器 */
+/** 按压反馈 */
 export function Pressable({ children, className, onClick, disabled }: { children: ReactNode; className?: string; onClick?: () => void; disabled?: boolean }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className={className}
       onClick={disabled ? undefined : onClick}
-      whileTap={disabled || reduced ? undefined : { scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 400, damping: 28 }}
+      whileTap={disabled || reduced ? undefined : { scale: 0.985 }}
+      transition={{ duration: 0.12 }}
       style={disabled ? { opacity: 0.5, pointerEvents: "none" } : undefined}
     >
       {children}
@@ -133,7 +127,7 @@ export function Collapse({ open, children }: { open: boolean; children: ReactNod
           initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 240, damping: 28 }}
+          transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
           style={{ overflow: "hidden" }}
         >
           {children}

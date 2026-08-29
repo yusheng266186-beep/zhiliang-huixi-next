@@ -3,114 +3,89 @@
 > 本文档是全部 UI 代码的唯一事实来源。所有视图必须严格遵守这里的设计语言、动效词汇与组件契约。
 > 铁律：**只改设计、UI、动画；功能、数据、口径、文案语义一律不变。**
 
-## 0. 铁律
+## 0. 设计方向：「简约高级」（v2，替换原深色方案）
+
+用户定调：**简约、高级、动效流畅、交互完美；拒绝任何"AI 生成感"的堆砌元素。**
+
+明确禁止：深色太空背景、极光/星空/玻璃拟态、霓虹发光、渐变文字、大阴影、科技风英文口号
+（如 EXAM INTELLIGENCE / LIVE SNAPSHOT / 驾驶舱）。
+
+采用：纸感浅色画布 + 白色卡片 + 发丝描边 + 墨色文字 + 单一克制的蓝。
+参考气质：Linear / Stripe / Apple 的产品页——版式与留白承担设计，装饰近乎为零。
+
+| 令牌 | 值 | 用途 |
+| --- | --- | --- |
+| --bg-0 | #f7f7f4 | 画布（暖纸灰） |
+| 卡片 | #ffffff + 1px #e8e6e1 | Panel/表格/输入框 |
+| --line / --line-strong | #e8e6e1 / #d8d5ce | 发丝描边两级 |
+| --text / muted / faint | #1c1b18 / #75736c / #a3a199 | 墨三级 |
+| --accent | #2b5bd7 | 唯一强调色：激活态、主数据系列、焦点环 |
+| --tier-top / --tier-under | #b45309 / #0f766e | 一本 / 本科语义色（降饱和） |
+| --warn / --danger | #c2410c / #b91c1c | 提醒 / 错误 |
+
+## 1. 铁律
 
 1. `app/lib/**` 一律不许修改（parser/analytics/report-model/exporters/storage/types/class-config/demo 是功能核心）。
-2. 每个视图展示的数据必须与旧版（`/tmp/repo-eval/zhiliang-huixi-new-/app/page.tsx` 中对应视图）完全一致：同样的分析函数、同样的参数、同样的表格列、同样的空态文案语义。
-3. 中文文案保持业务语义不变（可以因布局调整措辞顺序，不得改变含义或删除信息）。
-4. 所有动效必须尊重 `prefers-reduced-motion`（ui.tsx 的 Reveal/Stagger 已内置，勿绕过）。
-5. TypeScript strict 全绿；不使用 `any`；样式用 Tailwind 4 工具类 + `tokens.css` 变量，禁止内联十六进制颜色。
-6. 只创建/修改分配给你的文件。
+2. 每个视图展示的数据必须与旧版（`/tmp/repo-eval/zhiliang-huixi-new-/app/page.tsx` 对应视图）完全一致。
+3. 中文文案保持业务语义不变。
+4. 所有动效必须尊重 `prefers-reduced-motion`（motion.tsx 原语已内置）。
+5. TypeScript strict 全绿；样式用 Tailwind 4 工具类 + tokens 变量；**禁止**内联十六进制色（语义色通过 theme 类）、**禁止** box-shadow 彩色发光、**禁止**渐变背景/文字。
 
-## 1. 设计方向：「深空观测站」
-
-旧版是浅色纸感、圆角卡片、靛紫点缀。新版必须与之形成全方位反差：
-
-- **深空底**：近黑的深蓝画布（--bg-0 → --bg-1），全局固定的极光渐变层与星点噪点，营造"观测站"氛围。
-- **玻璃面板**：半透明白 4% 面板 + 1px 冷灰描边 + backdrop-blur，圆角 16px（--radius）。悬停时边框泛青光。
-- **数据即主角**：大号等宽数字（tabular-nums、clamp 字号）、细颗粒的标签、强烈的大小对比。
-- **双色主线**：青（--accent #22d3ee）为主导航与焦点色，紫（--accent-2 #a78bfa）为次要强调；语义色保持可读：一本=琥珀 --tier-top、本科=翠绿 --tier-under（与旧版语义一致，但质感换为发光描边）。
-- **层次靠光不靠影**：发光边框、渐变描边、聚焦光环，代替旧版的大阴影。
-
-## 2. 动效词汇表（全部用 motion/react，禁止 CSS transition 代替）
+## 2. 动效词汇表（全部用 motion/react 原语，见 components/motion.tsx）
 
 | 场景 | 动效 | 参数 |
 | --- | --- | --- |
-| 视图切换 | AnimatePresence 交叉淡入 + 8px 上浮 | duration .28, ease [0.22, 1, 0.36, 1] |
-| 内容进场 | Stagger 逐项弹入（y 12→0, opacity 0→1） | spring stiffness 260 damping 26，子项 0.05s 错拍 |
-| KPI 数字 | CountUp 数字滚动 | 0.9s，easeOut，进入视口触发一次 |
-| 卡片悬停 | 上浮 3px + 边框青光 | spring stiffness 300 damping 24 |
-| 面板展开 | 高度 + 透明度 spring | stiffness 240 damping 28 |
-| 图表 | recharts 自带动画保留 | ≥700ms |
-| 导航激活 | layoutId 滑动指示条 | spring stiffness 380 damping 32 |
-| 导入中 | 边框流光（beam）+ 进度条 | 线性循环 |
-| **禁止** | 弹跳过冲、旋转入场、>500ms 的装饰动效 | — |
+| 视图切换 | 淡入 + 6px 上浮 | duration 0.2 |
+| 内容进场 | 轻错拍（y 6→0，无缩放） | 0.3s，错拍 0.03s |
+| KPI 数字 | CountUp 滚动 | spring 160/30，进入视口触发一次 |
+| 卡片悬停 | 边框加深（CSS），无位移 | 0.25s |
+| 按钮 | active:scale-0.98 | 0.12s |
+| 面板展开 | 高度 + 透明度 | 0.22s |
+| 导航激活 | layoutId 滑块（灰底） | spring 380/32 |
+| **禁止** | 弹跳过冲、模糊过渡、旋转入场、>500ms 装饰动效、彩色发光阴影 | — |
 
-## 3. 布局骨架（AppShell 已实现，勿重做）
+## 3. 布局骨架（AppShell 已实现）
 
-- 左侧 76px 图标导航栏（玻璃质感，分组标签 hover 展开），激活项有 layoutId 滑块。
-- 顶部全局筛选条：考试 / 类别 / 班级 三个下拉（玻璃胶囊），右侧数据源徽章 + 导入按钮。
-- 内容区 max-w-[1400px] 居中，视图切换带 PageTransition。
-- 移动端（<900px）：导航栏折叠为底部栏。
+- 左侧 76px 白底导航栏（发丝右边框）：图标 + title 提示，激活项灰底墨字，layoutId 滑块。
+- 顶部：品牌行（QUALITY INSPECT / 质量慧析）+ 数据源徽章 + 导入/设置按钮；下接全局筛选条（考试/类别/班级）。
+- 内容区 max-w-[1400px]，视图切换 PageTransition。
+- 移动端（<900px）：底部导航栏。
 
 ## 4. 文件契约
 
 ```
 app/
-├── page.tsx                # AppShell（已实现，勿改）
-├── styles/globals.css      # 设计令牌 + 极光背景 + 通用样式（已实现，勿改）
-├── lib/                    # 功能核心（禁改）
-│   ├── hooks.ts            # useDataset / ViewContext 类型（已实现，勿改）
-│   └── chart-theme.ts      # 图表主题（勿改）
+├── page.tsx                # AppShell（勿改结构）
+├── styles/globals.css      # 设计令牌（勿改数值，见本文档第 0 节）
+├── lib/                    # 功能核心（禁改）；hooks.tsx 提供数据 Context
 ├── components/
-│   ├── ui.tsx              # 共享 UI 原语（已实现，勿改）：Panel/StatBlock/DataTable/SegmentBar/EmptyState/Chip/Select…
-│   ├── motion.tsx          # 动效原语（已实现，勿改）：Reveal/Stagger/CountUp/PageTransition/Hoverable
-│   └── charts.tsx          # 懒加载图表（已实现，勿改）
-└── views/                  # ★ 子代理只写这里 ★
-    ├── DashboardView.tsx   # 视图：总览
-    ├── GradeView.tsx       # 视图：年级成绩
-    ├── ClassesView.tsx     # 视图：班级对比
-    ├── SubjectsView.tsx    # 视图：学科分析
-    ├── StudentsView.tsx    # 视图：学生画像
-    ├── OnlineView.tsx      # 视图：上线与临界
-    ├── ItemsView.tsx       # 视图：小题知识点
-    ├── HistoryView.tsx     # 视图：历次考试
-    ├── ReportsView.tsx     # 视图：报告中心（含导出与按需导出宿主）
-    └── SettingsView.tsx    # 视图：规则与班型（含导入流程）
+│   ├── ui.tsx              # Panel/StatBlock/DataTable/Chip/Select/Segmented/SegmentBar/EmptyState/TierBadge/GlowButton
+│   ├── motion.tsx          # PageTransition/Reveal/Stagger/StaggerItem/CountUp/Hoverable/Pressable/Collapse
+│   └── charts.tsx          # 懒加载图表（浅色主题）
+└── views/                  # 10 个视图
 ```
 
 ## 5. 视图公共契约
 
-每个视图默认导出一个组件，签名：
+每个视图默认导出 `({ ctx }: { ctx: ViewContext })`；`ViewContext = { dataset, exam, track, classNo, setExam, setTrack, setClassNo, go }`。
+分析计算一律调用 `lib/analytics.ts`（同参数），不重复实现。数据操作（导入/演示/清除）通过 `useDataset()`（全局 Context，导入后全站即时同步）。
 
-```tsx
-export default function XxxView({ ctx }: { ctx: ViewContext }) { ... }
-```
+## 6. 报告中心特别要求
 
-`ViewContext`（来自 `lib/hooks.ts`）：`{ dataset, exam, track, classNo, setExam, setTrack, setClassNo, go(view) }`。
-视图内部自己 `useMemo` 调用 `lib/analytics.ts` 的函数（与旧版同参数），绝不重复实现计算。
+- 报告正文结构完整保留（品牌行、六段、质量与方法）；导出 Word/PDF/Excel 沿用 lib/exporters。
+- PDF 按需挂载 `id="export-report-content"` 浅色打印宿主（挂载 → 双 rAF → html2canvas → 卸载）。
 
-顶部不需要再放全局筛选（AppShell 已有）；视图私有的二级筛选（如学科选择、学生搜索）放在视图内部，用 `Chip`/`Select` 原语。
+## 7. 设置视图特别要求
 
-## 6. 报告中心特别要求（ReportsView）
+- 导入流程：拖拽/选择 → 解析 → issues 三级提醒 → IndexedDB 持久化；演示数据与清除（内联二次确认）。
+- 班型配置（CLASS_PROFILES）与能力矩阵/字段映射展示照搬功能。
 
-- 报告正文是**功能内容**：报告结构（品牌行、六段、质量与方法）必须完整保留，只是重新设计呈现。
-- 导出三按钮（Word/PDF/Excel）沿用 `lib/exporters.ts`；PDF 需要按需挂载 `id="export-report-content"` 的隐藏宿主（挂载 → 双 rAF → html2canvas → 卸载），模式参考旧版 page.tsx 的 exportPdf。
-- 导出中按钮要有 loading 态（LoaderCircle 旋转 + 禁用）。
+## 8. 高级感工艺清单（逐条落实）
 
-## 7. 设置视图特别要求（SettingsView）
-
-- 导入流程是核心功能：拖拽/选择工作簿 → 解析 → 校验提醒（issues 列表渲染）→ IndexedDB 持久化 → 演示数据按钮。
-- 班型配置展示（CLASS_PROFILES）与字段识别置信度展示照搬功能，重新设计呈现。
-
-## 8. 高级感工艺清单（用户明确要求，逐条落实）
-
-**设计感**
-- 8pt 间距节奏：元素间距只用 4/8/12/16/24/32；面板内边距 p-5/p-6，区块间距 gap-4/gap-6
-- 层次三段式：极光背景(fixed) < 玻璃面板 < 浮层（弹窗/提示条），绝不混用
-- 字体层次：页面标题 clamp(20px,2vw,26px)；区块标题 15px semibold；正文 13px；辅助 11-12px muted/faint
-- 数字永远 tabular-nums（.kpi-num / .num）；KPI 用 clamp(26px,3.2vw,40px)
-- 每个可交互元素必须有 hover/active/focus-visible 三态；按钮 active:scale-[0.97]
-- 空态必须设计过（图标+标题+行动建议），禁止空白区域
-
-**动画流畅度**
-- 只允许两种时间曲线：spring（交互反馈）与 [0.22,1,0.36,1]（进出场景）；循环动效才可用 linear
-- 进场错拍 0.04-0.06s；所有动画 ≤500ms（图表 ≥700ms 除外）
-- transform/opacity 之外不做动画（避免重排）；长列表禁用逐项动画（>30 项只动画容器）
-- 页面切换必须无闪烁：AnimatePresence mode="wait" + 骨架屏兜底
-
-**交互完美度**
-- 所有异步操作：loading 态（LoaderCircle 旋转）→ 成功/失败行内提示 → 状态恢复
-- 表单回车提交、Esc 关闭浮层、拖拽区 dragenter/dragleave 计数器防抖
-- 数字变化用 CountUp 平滑追踪，不要跳变
-- 每个 Panel 的动作位（action）放该区块最高频操作，不要藏进下拉
+- 8pt 间距节奏（4/8/12/16/24/32）；面板 p-5/p-6；区块 gap-4/gap-6
+- 层次靠留白与发丝线，不靠阴影和颜色堆砌；全站最多一个强调色
+- 字体层次：页面标题 18px semibold tracking-tight；区块标题 14px；正文 13px；辅助 11-12px muted/faint
+- 数字永远 tabular-nums；KPI clamp(26px,3vw,34px)
+- 所有可交互元素有 hover/active/focus-visible 三态
+- 空态设计过（图标+标题+建议）；异步操作有 loading → 结果提示 → 状态恢复
+- 长列表（>30 项）不做逐项动画

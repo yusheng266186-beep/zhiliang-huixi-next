@@ -13,13 +13,13 @@ import type { ViewContext } from "../lib/hooks";
 
 // 与旧版 SEGMENT_COLORS 语义一致（任务约定：分段色沿用旧版语义内联样式）
 const SEGMENT_COLORS: Record<ScoreSegment["id"], string> = {
-  high: "#5B5BD6",
-  top: "#7C73E6",
-  "top-critical": "#F59E0B",
-  undergraduate: "#10B981",
-  "undergraduate-critical": "#34D399",
-  foundation: "#94A3B8",
-  unclassified: "#CBD5E1",
+  high: "#1c1b18",
+  top: "#55524b",
+  "top-critical": "#b45309",
+  undergraduate: "#0f766e",
+  "undergraduate-critical": "#0d9488",
+  foundation: "#a8a49b",
+  unclassified: "#dedbd4",
 };
 
 const format1 = (value: number) => value.toFixed(1);
@@ -31,8 +31,8 @@ type CriticalStudent = ReturnType<typeof criticalStudentsByTier>[number];
 function TierLegend() {
   return (
     <div className="flex shrink-0 items-center gap-3 text-[11px] text-muted">
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.7)]" />一本/特控</span>
-      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.7)]" />本科</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-top" />一本/特控</span>
+      <span className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-tier-under" />本科</span>
     </div>
   );
 }
@@ -178,14 +178,14 @@ export default function OnlineView({ ctx }: { ctx: ViewContext }) {
                       <div className="flex items-center gap-2">
                         <span className="w-8 shrink-0 text-[10px] text-tier-top">一本</span>
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                          <div className="h-full rounded-full bg-tier-top shadow-[0_0_8px_rgba(251,191,36,0.45)] transition-[width] duration-700" style={{ width: `${Math.min(100, item.topRate * 100)}%` }} />
+                          <div className="h-full rounded-full bg-tier-top transition-[width] duration-700" style={{ width: `${Math.min(100, item.topRate * 100)}%` }} />
                         </div>
                         <span className="num w-28 shrink-0 text-right text-[10px] text-muted">{item.topCount}人 · {percent(item.topRate)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="w-8 shrink-0 text-[10px] text-tier-under">本科</span>
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                          <div className="h-full rounded-full bg-tier-under shadow-[0_0_8px_rgba(52,211,153,0.45)] transition-[width] duration-700" style={{ width: `${Math.min(100, item.undergraduateRate * 100)}%` }} />
+                          <div className="h-full rounded-full bg-tier-under transition-[width] duration-700" style={{ width: `${Math.min(100, item.undergraduateRate * 100)}%` }} />
                         </div>
                         <span className="num w-28 shrink-0 text-right text-[10px] text-muted">{item.undergraduateCount}人 · {percent(item.undergraduateRate)}</span>
                       </div>

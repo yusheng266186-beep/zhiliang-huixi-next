@@ -13,13 +13,13 @@ import type { SubjectName } from "../lib/types";
 
 // 与旧版 SEGMENT_COLORS 语义一致（任务约定：分段色沿用旧版语义内联样式）
 const SEGMENT_COLORS: Record<ScoreSegment["id"], string> = {
-  high: "#5B5BD6",
-  top: "#7C73E6",
-  "top-critical": "#F59E0B",
-  undergraduate: "#10B981",
-  "undergraduate-critical": "#34D399",
-  foundation: "#94A3B8",
-  unclassified: "#CBD5E1",
+  high: "#1c1b18",
+  top: "#55524b",
+  "top-critical": "#b45309",
+  undergraduate: "#0f766e",
+  "undergraduate-critical": "#0d9488",
+  foundation: "#a8a49b",
+  unclassified: "#dedbd4",
 };
 
 // 与旧版一致的学科列顺序
@@ -113,7 +113,7 @@ export default function GradeView({ ctx }: { ctx: ViewContext }) {
           title="年级总成绩表"
           subtitle={`共${activeScores.length}名学生，可按总分、市排名、校排名查看`}
           action={
-            <span className="shrink-0 rounded-full border border-accent/60 bg-accent/12 px-3.5 py-1.5 text-xs text-accent shadow-[0_0_14px_rgba(34,211,238,0.18)]">{track}</span>
+            <span className="shrink-0 rounded-full border border-line-strong bg-white px-3.5 py-1.5 text-xs text-ink">{track}</span>
           }
         >
           {/* 分层概览（语义色沿用旧版） */}
