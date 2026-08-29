@@ -70,7 +70,6 @@ function AppShell() {
     };
   }, [data.dataset, filters]);
 
-  const ActiveView = ctx ? viewComponents[view] : null;
   // 设置页的导入流程必须在"无数据"时也可达：用空数据集桩构造一个仅设置页使用的 ctx
   const emptyDataset: GradeDataset = {
     id: "empty", sourceName: "", importedAt: "", school: "", exams: [], scores: [],

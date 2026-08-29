@@ -92,3 +92,25 @@ export default function XxxView({ ctx }: { ctx: ViewContext }) { ... }
 
 - 导入流程是核心功能：拖拽/选择工作簿 → 解析 → 校验提醒（issues 列表渲染）→ IndexedDB 持久化 → 演示数据按钮。
 - 班型配置展示（CLASS_PROFILES）与字段识别置信度展示照搬功能，重新设计呈现。
+
+## 8. 高级感工艺清单（用户明确要求，逐条落实）
+
+**设计感**
+- 8pt 间距节奏：元素间距只用 4/8/12/16/24/32；面板内边距 p-5/p-6，区块间距 gap-4/gap-6
+- 层次三段式：极光背景(fixed) < 玻璃面板 < 浮层（弹窗/提示条），绝不混用
+- 字体层次：页面标题 clamp(20px,2vw,26px)；区块标题 15px semibold；正文 13px；辅助 11-12px muted/faint
+- 数字永远 tabular-nums（.kpi-num / .num）；KPI 用 clamp(26px,3.2vw,40px)
+- 每个可交互元素必须有 hover/active/focus-visible 三态；按钮 active:scale-[0.97]
+- 空态必须设计过（图标+标题+行动建议），禁止空白区域
+
+**动画流畅度**
+- 只允许两种时间曲线：spring（交互反馈）与 [0.22,1,0.36,1]（进出场景）；循环动效才可用 linear
+- 进场错拍 0.04-0.06s；所有动画 ≤500ms（图表 ≥700ms 除外）
+- transform/opacity 之外不做动画（避免重排）；长列表禁用逐项动画（>30 项只动画容器）
+- 页面切换必须无闪烁：AnimatePresence mode="wait" + 骨架屏兜底
+
+**交互完美度**
+- 所有异步操作：loading 态（LoaderCircle 旋转）→ 成功/失败行内提示 → 状态恢复
+- 表单回车提交、Esc 关闭浮层、拖拽区 dragenter/dragleave 计数器防抖
+- 数字变化用 CountUp 平滑追踪，不要跳变
+- 每个 Panel 的动作位（action）放该区块最高频操作，不要藏进下拉
