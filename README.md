@@ -9,6 +9,25 @@
 > 源代码：[查看本仓库](https://github.com/yusheng266186-beep/zhiliang-huixi-next)  
 > 正式库：[zhiliang-huixi-new-](https://github.com/yusheng266186-beep/zhiliang-huixi-new-)（线上地址不变）
 
+<!-- project-navigation:start -->
+## 项目概览
+
+| 项目 | 说明 |
+| --- | --- |
+| 分类 | 教学分析与备考 |
+| 平台 | 浏览器 / React / TypeScript |
+| 当前定位 | 界面重构提案 |
+
+质量慧析的界面重构方案，用于评估交互和视觉后再按合并说明整合。
+
+[在线体验](https://yusheng266186-beep.github.io/zhiliang-huixi-next/) · [使用与开发](#版权与使用说明) · [项目总导航](https://github.com/yusheng266186-beep/yusheng266186-beep)
+
+正式使用入口见 [质量慧析主项目](https://github.com/yusheng266186-beep/zhiliang-huixi-new-)；本库用于评估新界面。功能与数据口径的对照、当前取舍和合并条件见下文。
+
+**阅读导航：** [版权与使用说明](#版权与使用说明) · [快速开始](#快速开始) · [数据与隐私](#数据与隐私) · [目录结构](#目录结构)
+
+<!-- project-navigation:end -->
+
 ## 项目定位
 
 这是一个**界面替换提案**，而不是一个新产品：
