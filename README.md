@@ -1,5 +1,7 @@
 # 质量慧析 NEXT · 简约高级版
 
+[English guide](README.en.md)
+
 > 先把版面做对，再谈数据洞察。
 
 质量慧析的**全新界面重构版（备用库）**：设计、交互、动效三个层面从零重做，
@@ -42,7 +44,8 @@
 
 | 层 | 状态 | 说明 |
 | --- | --- | --- |
-| `app/lib/`（解析/分析/报告模型/导出/存储/班型配置） | **与正式库逐字节一致** | 解析回归结果与正式库逐字相同（7255 成绩 / 11 考试 / 19 分数线 / 16047 小题，置信度 0.922） |
+| `app/lib/`（解析、分析、报告模型、导出、存储、班型配置） | **核心文件与正式库一致** | 解析回归结果与正式库逐字相同（7255 成绩 / 11 考试 / 19 分数线 / 16047 小题，置信度 0.922） |
+| `app/lib/chart-theme.ts` 与 `app/lib/hooks.tsx` | NEXT 界面辅助模块 | 图表主题有差异，`hooks.tsx` 为 NEXT 新增。 |
 | `app/components/`、`app/views/`、`app/styles/`、`app/page.tsx` | **全部重写** | 设计系统、动效原语、组件库、10 个视图 |
 | 配置与工作流 | 重写/继承 | Vite 8 单配置、GitHub Actions 质量门（tsc + eslint + 构建冒烟） |
 
@@ -101,7 +104,7 @@ npm run dev            # 本地开发（纯 Vite，默认 http://localhost:5173�
     npm run test:analytics  # 统计口径验证
 
 `test:parser` / `test:analytics` 不带参数时默认使用合成示例工作簿
-（由 `scripts/make-fixture.ts` 从真实工作簿生成，本机生成、不入库，见 `examples/README.md`）；
+（使用 `scripts/make-fixture.ts` 在本机准备，同类示例工作簿不入库）；
 分析真实数据时通过参数显式传入：
 
     npm run test:parser -- "C:/path/to/高2024级4册质量复盘.xlsx"
@@ -120,11 +123,10 @@ npm run dev            # 本地开发（纯 Vite，默认 http://localhost:5173�
     zhiliang-huixi-next/
     ├── app/
     │   ├── components/       # 共享 UI 原语、动效原语、懒加载图表
-    │   ├── lib/              # 功能核心（与正式库一致，禁改）
+    │   ├── lib/              # 共享分析核心及 NEXT 图表与界面辅助模块
     │   ├── styles/           # 设计令牌与基础样式
     │   ├── views/            # 10 个视图组件
     │   └── page.tsx          # AppShell：导航、全局筛选、视图切换
-    ├── examples/             # 合成示例的生成说明（工作簿本身不入库）
     ├── pages-static/         # Pages 静态入口
     ├── public/               # 公共资源
     ├── scripts/              # 解析/分析验证、fixture 生成、构建冒烟
@@ -146,7 +148,7 @@ npm run dev            # 本地开发（纯 Vite，默认 http://localhost:5173�
 
 修改本仓库时建议同步检查：
 
-1. `app/lib/**` 是否保持与正式库一致（一致性是"功能不变"承诺的基础）；
+1. 核对解析、统计、导出与存储模块和正式库的一致性，另外检查 NEXT 图表主题和交互辅助模块；
 2. 每个视图的数据口径是否仍与正式库对应视图一致（对照 `npm run test:analytics`）；
 3. 新增颜色是否使用了 `globals.css` 令牌（禁止内联十六进制色与彩色阴影）；
 4. 动效是否通过 `components/motion.tsx` 原语实现（≤350ms，尊重 reduced-motion）；
@@ -157,7 +159,7 @@ npm run dev            # 本地开发（纯 Vite，默认 http://localhost:5173�
 
 验收通过后，将本仓库的设计层合并回 [`zhiliang-huixi-new-`](https://github.com/yusheng266186-beep/zhiliang-huixi-new-)：
 
-1. 在正式库开分支，替换 `app/`（`lib/` 保持正式库版本不动）、`pages-static/` 与相关配置；
+1. 在正式库开分支，合并界面、静态入口和配置。保留正式库解析与统计模块，复核 NEXT 图表主题和 React hooks 的调用处；
 2. 保留正式库的 `.github/workflows/pages.yml`（含 legacy/v2 双轨发布逻辑）；
 3. 走正式库 PR + CI 质量门后合并；
 4. 合并后用真实工作簿做一次导入回归，确认解析口径与导出链路不变。
